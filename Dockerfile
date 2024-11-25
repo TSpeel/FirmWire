@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 LABEL "about"="FirmWire base img"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get upgrade -y && \
     python3 python3-pip libc++-dev libcurl4-openssl-dev libelf-dev libffi-dev libdwarf-dev libelf-dev libwiretap-dev wireshark-dev python3-pycparser \
     protobuf-compiler protobuf-c-compiler python3-protobuf libprotoc-dev libprotobuf-dev libprotobuf-c-dev libjsoncpp-dev \
     gdb-multiarch python3-pip qemu-utils libcapstone-dev \
+    cmake libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev liblz4-dev \
   && apt-get update \
   && apt-get install -y gcc-9-mipsel-linux-gnu gcc-9-multilib \
   && update-alternatives --install /usr/bin/mipsel-linux-gnu-gcc mipsel-linux-gnu-gcc /usr/bin/mipsel-linux-gnu-gcc-9 10 \
@@ -32,8 +33,23 @@ RUN apt-get update && apt-get upgrade -y && \
 # pypanda needs the latest cffi, because $reasons
 
   
-# Install panda, and deps for Shannon Panda
+# Install patched rocksdb, panda, and deps for Shannon Panda
 WORKDIR /firmwire_deps
+RUN rm -rf rocksdb python-rocksdb \
+  && git clone https://github.com/facebook/rocksdb.git \
+  && cd rocksdb \
+  && mkdir build && cd build \
+  && cmake .. \
+  && make -j `nproc`\
+  && cd .. \
+  && export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}${CPLUS_INCLUDE_PATH:+:}`pwd`/include/ \
+  && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}`pwd`/build/ \
+  && export LIBRARY_PATH=${LIBRARY_PATH}${LIBRARY_PATH:+:}`pwd`/build/ \
+  && cd .. \
+  && git clone https://github.com/HathorNetwork/python-rocksdb.git \
+  && cd python-rocksdb \
+  && pip install .
+
 RUN rm -rf panda \
   && git clone --depth=1 https://github.com/FirmWire/panda.git \
   && cd panda \
