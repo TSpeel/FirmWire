@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 LABEL "about"="FirmWire base img"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -25,9 +25,9 @@ RUN apt-get update && apt-get upgrade -y && \
     gdb-multiarch python3-pip qemu-utils libcapstone-dev \
     cmake libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev liblz4-dev \
   && apt-get update \
-  && apt-get install -y gcc-9-mipsel-linux-gnu gcc-9-multilib \
+  && apt-get install -y gcc-9-mipsel-linux-gnu gcc-9-multilib python3.9-full python3.9-dev \
   && update-alternatives --install /usr/bin/mipsel-linux-gnu-gcc mipsel-linux-gnu-gcc /usr/bin/mipsel-linux-gnu-gcc-9 10 \
-  && pip3 install https://foss.heptapod.net/pypy/cffi/-/archive/branch/default/cffi-branch-default.tar.gz
+  && python3.9 -m pip install https://foss.heptapod.net/pypy/cffi/-/archive/branch/default/cffi-branch-default.tar.gz
 # Ubuntu is unable to install the gcc-multilib metapackage with any cross compiler due to /usr/include/asm conflicts
 # See: https://bugs.launchpad.net/ubuntu/+source/gcc-defaults/+bug/1300211
 # pypanda needs the latest cffi, because $reasons
@@ -48,7 +48,7 @@ RUN rm -rf rocksdb python-rocksdb \
   && cd .. \
   && git clone https://github.com/HathorNetwork/python-rocksdb.git \
   && cd python-rocksdb \
-  && pip install .
+  && python3.9 -m pip install .
 
 RUN rm -rf panda \
   && git clone --depth=1 https://github.com/FirmWire/panda.git \
@@ -114,10 +114,10 @@ RUN rm -rf panda \
     --disable-virglrenderer \
   && make -j `nproc` \
   && cd /firmwire_deps/panda/panda/python/core/ \
-  && python3 setup.py install
+  && python3.9 setup.py install
 
 COPY requirements.txt /firmwire/requirements.txt
-RUN pip3 install -r /firmwire/requirements.txt
+RUN python3.9 -m pip install -r /firmwire/requirements.txt
 
 WORKDIR /firmwire
 CMD [ "/bin/bash" ]
