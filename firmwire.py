@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.9
 ## Copyright (c) 2022, Team FirmWire
 ## SPDX-License-Identifier: BSD-3-Clause
 import argparse
