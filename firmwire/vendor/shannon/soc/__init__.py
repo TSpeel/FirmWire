@@ -219,6 +219,55 @@ class S337AP(ShannonSOC):
             )
 
 
+
+class S307AP(ShannonSOC):
+    peripherals = [
+        SOCPeripheral(MotoUARTPeripheral, 0x84005000, 0x1000, name="boot_uart"),
+        SOCPeripheral(PMICPeripheral, 0x8F910000, 0x1000, name="PMIC"),
+    ]
+    # Quite similar to the S5000AP despite the SoC gap
+    CHIP_ID = 0x03070000
+    SIPC_BASE = 0x8F920000
+    SHM_BASE = 0x48000000
+    SOC_BASE = 0x82000000
+    SOC_CLK_BASE = 0x83000000
+    CLK_PERIPHERAL = S337APClkPeripheral
+    TIMER_BASE = SOC_BASE + 0x8000
+
+    # Overwrite the entry address to start at MAIN
+    # Why? Well for some reason the WARM boot flags when set to 1,1 causes the BOOT
+    # to fail with "Unknown", BUT changing these to 1,0 causes MAIN to fail as it doesn't
+    # __scatterload (it expected WARM boot with code still in memory)
+    #
+    # So solution is to just skip BOOT
+    ENTRY_ADDRESS = 0x40010000
+
+    name = "S307AP"
+
+    def __init__(self, date, main_section):
+        super().__init__(date)
+
+        if date < 2199970:
+            self.peripherals += (
+                SOCPeripheral(
+                    DSPPeripheral,
+                    0x4781E000,
+                    0x100,
+                    name="DSPPeripheral",
+                    sync=[162, 324],
+                ),
+            )
+        else:
+            self.peripherals += (
+                SOCPeripheral(
+                    DSPPeripheral,
+                    0x4781E000,
+                    0x100,
+                    name="DSPPeripheral",
+                    sync=[164, 324],
+                ),
+            )
+
 class S335AP(ShannonSOC):
     peripherals = [
         SOCPeripheral(S3xxAPBoot, 0x90540000, 0x100, name="S3xxboot"),
@@ -251,6 +300,7 @@ class S335AP(ShannonSOC):
 
 register_soc("shannon", S335AP)
 register_soc("shannon", S337AP)
+register_soc("shannon", S307AP)
 register_soc("shannon", S353AP)
 register_soc("shannon", S355AP)
 register_soc("shannon", S360AP)
