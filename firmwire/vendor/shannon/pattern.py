@@ -33,7 +33,9 @@ PATTERNS = {
         "required": True,
     },
     "OS_fatal_error": {
-        "pattern": "70 b5 05 46 ???????? ?? 48 ?? 24",
+        "pattern": ["70 b5 05 46 ???????? ?? 48 ?? 24",
+        "70 b5 00 24 05 46 20 46 09 f0",
+        ]
     },
     "pal_MemAlloc": {
         "pattern" : [
@@ -52,7 +54,9 @@ PATTERNS = {
         ]
     },
     "pal_Sleep": {
-        "pattern": "30 b5 ?+ 98 ?+  ??98 ??22 ??23 11 46 ?? 94",
+        "pattern": ["30 b5 ?+ 98 ?+  ??98 ??22 ??23 11 46 ?? 94",
+        "30 b5 ?+ 98 ?+  ??98 ??23 11 46 ?? 94", # Credits to Marius Muench
+        ]
         # 30 b5 00 25 83 b0 04 46 2a 46 29 46 01 a8 d9 f6 2a e9 01 98 78 b1 29 46 d9 f6 90 e8 01 98 01 22 00 23 11 46 00 94 d9 f6 36 e9 01 98 d8 f6 5e ee 01 98 d9 f6 28 e9 5c f7 09 d8 00 28 02 d0 02 a8 ff f7 42 fe 03 b0 30 bd
         # 30 b5 04 46 85 b0 df 4b 40 f2 02 30 00 22 00 90 11 46 01 a8 0e f1 54 ee dd f8 04 c0 bc f1 00 0f 1c d0 00 25 01 21 03 ab 2a 46 0c f1 38 00 00 95 65 f4 1a f1 01 98 29 46 8b f1 a8 ed 01 98 01 22 00 23 11 46 00 94 5b f1 58 ed 01 98 8b f1 2e ec cd 49 40 f2 13 32 01 98 8b f1 a0 ed f0 f4 a1 f0 00 28 02 d0 02 a8 ff f7 1a fe 05 b0 30 bd
     },
@@ -61,6 +65,7 @@ PATTERNS = {
             "0fb4 2de9f047 ???? ??98 d0e90060 c0f34815",
             "0fb4 2de9f0?? ???? ??98 d0e900?? ??f3????",
             "0f b4 10 b5 03 a9 02 98 ff f7 9a ff 10 bc 5d f8 14 fb",
+            "0fb4 2de9f047 ???? ??98 d0e90060 ?* c0f34815",
         ],
         "required": True,
     },

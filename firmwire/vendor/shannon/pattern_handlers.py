@@ -317,7 +317,10 @@ def find_lterrc_int_mob_cmd_ho_from_irat_msgid(data, offset):
         "?? ?? 14 ?? ?? d0 ?? ?? ?? d0 ?? ?? ?? d0 ?? f5 43 ?? ?? ?? ?? d0 ?* 01 20"
     )
 
-    off = bp.find(data)[0]
+    off = bp.find(data) # Fix from Marius Muench
+    if off is None:
+        return None
+    off = off[0]
     res = 0xC3 << 8 | data[off]
     return res
 
