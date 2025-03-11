@@ -9,7 +9,9 @@ from .queue import QUEUE_STRUCT_SIZE
 
 log = logging.getLogger(__name__)
 
-TASK_NAME_TO_FIND = b"GLAPD"
+#TASK_NAME_TO_FIND = b"GLAPD"
+TASK_NAME_TO_FIND = b"LTE_TCPIP"
+
 
 
 class ShannonMemEntry(object):
@@ -263,6 +265,57 @@ def find_task_table(data, offset):
 
     return ptr
 
+# Testing function for finding layout size
+"""
+def fixup_set_task_layout(self, sym, data, offset):
+    ptr = sym.address
+
+    # try to figure out task layout:
+    found_layout = None
+    layout = get_task_layouts()[0]
+    layout_size = range(1,1000)
+    for testsize in layout_size:
+        test_ptr = ptr
+        test_ptr -= testsize#layout.SIZE()
+        task_name_p = struct.unpack("I", data[test_ptr : test_ptr + 4])[0]
+        task_name_p_off = task_name_p - offset
+        name = data[task_name_p_off : task_name_p_off + 10]
+        name_bytes = name.tobytes()
+        print(struct.unpack("I",data[test_ptr : test_ptr + 4]), testsize)
+        
+        end_of_string = name_bytes.find(b"\x00")
+        #print(data[task_name_p_off-100 : task_name_p_off + 100].tobytes())
+        # not a cstring
+        if end_of_string == -1:
+            continue
+        # contents are as expected
+        if all(
+            [c in b"ABCDEFGHIJKLMNOPQRSTUVWXYZ__" for c in name_bytes[:end_of_string]]
+        ):
+            log.info(f"Found likely task name: {name_bytes}, keeping task layout")
+            found_layout = layout
+            break
+    if found_layout is None:
+        log.error("Couldn't retrieve correct task layout, aborting!")
+        raise ValueError("Missing task layout")
+    while True:
+        ptr -= found_layout.SIZE()
+        task_name_p = struct.unpack("I", data[ptr : ptr + 4])[0]
+        task_name_p_off = task_name_p - offset
+        name = data[task_name_p_off : task_name_p_off + 10]
+        # print(hex(task_name_p), name.tobytes())
+
+        # search backwards until we see an invalid address
+        if task_name_p < offset or task_name_p >= (offset + len(data)):
+            self.task_layout = found_layout
+            self.symbol_table.replace(
+                sym.name,
+                offset + ptr + found_layout.SIZE() - found_layout.TASK_NAME_PTR_OFFSET,
+            )
+            return True
+
+    raise ValueError("Invalid task layout")
+"""
 
 def fixup_set_task_layout(self, sym, data, offset):
     ptr = sym.address
@@ -291,7 +344,6 @@ def fixup_set_task_layout(self, sym, data, offset):
     if found_layout is None:
         log.error("Couldn't retrieve correct task layout, aborting!")
         raise ValueError("Missing task layout")
-
     while True:
         ptr -= found_layout.SIZE()
         task_name_p = struct.unpack("I", data[ptr : ptr + 4])[0]

@@ -52,10 +52,18 @@ class MotoTaskLayout(TaskLayout):
     SUBTASK_NAME_SIZE = 0x10
 
 
+class PixelWatchLTETaskLayout(TaskLayout):
+    NAME = "pixelWatchLTE"
+    TASK_STRUCT_SIZE = 0x1c0
+    TASK_NAME_PTR_OFFSET = 0x0
+    TASK_MAIN_FN_OFFSET = 0x0
+
+
 TASK_LAYOUT_BY_NAME = OrderedDict(
     {
         SamsungTaskLayout.NAME: SamsungTaskLayout,
         MotoTaskLayout.NAME: MotoTaskLayout,
+        PixelWatchLTETaskLayout.NAME: PixelWatchLTETaskLayout,
     }
 )
 
