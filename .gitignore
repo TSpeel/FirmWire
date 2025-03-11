@@ -13,3 +13,6 @@ panda/
 
 # container
 .devcontainer/devcontainer.json
+
+# firmware
+images/
