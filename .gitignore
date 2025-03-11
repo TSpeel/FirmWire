@@ -7,3 +7,9 @@ __pycache__
 
 # Firmware
 *_workspace/
+
+# panda
+panda/
+
+# container
+.devcontainer/devcontainer.json

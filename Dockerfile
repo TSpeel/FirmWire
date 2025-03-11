@@ -38,6 +38,7 @@ WORKDIR /firmwire_deps
 RUN rm -rf rocksdb python-rocksdb \
   && git clone https://github.com/facebook/rocksdb.git \
   && cd rocksdb \
+  && git checkout v9.10.0 \
   && mkdir build && cd build \
   && cmake .. \
   && make -j `nproc`\
